@@ -648,9 +648,3 @@ This project is licensed under the MIT License - see LICENSE file for details.
 - Raspberry Pi Foundation for hardware documentation
 - MFRC522 library contributors
 - IoT community for inspiration and support
-
----
-
-**Project Repository**: https://github.com/yourusername/iot-home-defense-system  
-**Documentation**: https://github.com/yourusername/iot-home-defense-system/wiki  
-**Issues**: https://github.com/yourusername/iot-home-defense-system/issues
