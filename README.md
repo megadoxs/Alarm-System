@@ -148,13 +148,9 @@ GPIO 12 ──── Button ──── GND (Internal pull-up enabled)
 
 ### Photos
 
-*[Add photos of your physical setup here]*
+<img width="4032" height="2268" alt="image" src="https://github.com/user-attachments/assets/7d52df6d-9563-435a-bb08-734f144d5d14" />
 
-**Photo 1**: Complete system overview  
-**Photo 2**: Breadboard wiring details  
-**Photo 3**: RFID reader and keycard  
-**Photo 4**: LCD display showing countdown  
-**Photo 5**: LED indicator array  
+
 
 ## Setup Instructions
 
