@@ -1,3 +1,4 @@
 backend/logs
 backend/media
 .env
+.idea
