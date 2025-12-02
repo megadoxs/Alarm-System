@@ -13,6 +13,8 @@ class MQTT_Controller:
             self.connected = True
             self.username = username
             self.logs = logs
+            self.mqtt_client.on_message = self._route_message
+            self.callbacks = {}
 
         except Exception as e:
             self.connected = False
@@ -24,23 +26,28 @@ class MQTT_Controller:
         try:
             result, _ = self.mqtt_client.publish(f"{self.username}/feeds/{topic}", str(message))
             return result == mqtt.MQTT_ERR_SUCCESS
-        except Exception as e:
+        except Exception:
             return False
 
-    def subscribe(self, topic, callback):
+    def _route_message(self, client, userdata, msg):
+        cb = self.callbacks.get(msg.topic)
+        if cb:
+            try:
+                cb(msg.payload.decode())
+            except Exception:
+                pass
+
+    def sub(self, topic, callback):
         if not self.connected:
             return False
 
         try:
             full_topic = f"{self.username}/feeds/{topic}"
 
-            def on_message(client, userdata, msg):
-                try:
-                    callback(msg.topic, msg.payload.decode())
-                except Exception:
-                    pass
+            # save callback for this topic
+            self.callbacks[full_topic] = callback
 
-            self.mqtt_client.on_message = on_message
+            # subscribe normally
             result, _ = self.mqtt_client.subscribe(full_topic)
             return result == mqtt.MQTT_ERR_SUCCESS
 

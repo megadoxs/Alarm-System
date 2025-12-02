@@ -31,23 +31,16 @@ class LOGS_Controller:
         if not os.path.exists(filename):
             return None
 
-        with open(filename, "rb") as f:
-            f.seek(0, os.SEEK_END)
-            pos = f.tell()
-
-            while pos > 0:
-                pos -= 1
-                f.seek(pos)
-                if f.read(1) == b'\n':
-                    break
-
-            last_line = f.readline().decode().strip()
-
-            if not last_line:
-                return None
-
-            row = next(csv.reader([last_line]))
-            return row[1] if len(row) > 1 else None
+        last_value = None
+        with open(filename, "r", newline="") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for row in reader:
+                if not row or all(cell.strip() == "" for cell in row):
+                    continue
+                if len(row) > 1:
+                    last_value = row[1]
+        return last_value
 
     def _getFile(self, file):
-        return os.path.join(str(self.dir), f"{datetime.now().strftime("%Y-%m-%d")}_{file}.csv")
+        return os.path.join(str(self.dir), f"{datetime.now().strftime('%Y-%m-%d')}_{file}.csv")

@@ -16,6 +16,7 @@ class LEDSController:
             LED(board.D21)  # Red LED
         ]
         self.leds[0].on() # Enables the green LED by default
+        self.active = True
 
     async def start(self, delay): # used to arm system
         try:
@@ -23,41 +24,59 @@ class LEDSController:
 
             start_time = time.time()
             while time.time() - start_time < delay: # blinks yellow LED
-                self.leds[1].toggle()
+                if self.active:
+                    self.leds[1].toggle()
                 await asyncio.sleep(self.interval) # blink time
 
-            self.leds[1].off()  # turns yellow LED off
-            self.leds[2].on()   # turns red LED on
+            if self.active:
+                self.leds[1].off()  # turns yellow LED off
         except asyncio.CancelledError:
-            self.leds[0].on()
-            self.leds[1].off()
+            if self.active:
+                self.leds[0].on()
+                self.leds[1].off()
 
+    def detecting(self):
+        if self.active:
+            self.leds[2].on()
 
     def reset(self):
-        self.leds[2].off() # turns red LED off
-        self.leds[0].on()  # turns green LED on
+        self.leds[0].off()
+        self.leds[1].off()
+        self.leds[2].off()
 
     async def warning(self): # used in disarm
         try:
             self.leds[2].off()
 
             while True:
-                self.leds[1].toggle()
+                if self.active:
+                    self.leds[1].toggle()
                 await asyncio.sleep(self.interval)
         except asyncio.CancelledError:
-            self.leds[1].off()
-            self.leds[0].on()
+            if self.active:
+                self.leds[1].off()
+                self.leds[0].on()
 
     async def alert(self):
         self.leds[0].off()
         try:
             while True:
-                self.leds[2].toggle()
+                if self.active:
+                    self.leds[2].toggle()
                 await asyncio.sleep(self.interval)
         except asyncio.CancelledError:
-            self.leds[2].off()
-            self.leds[0].on()
+            if self.active:
+                self.leds[2].off()
+                self.leds[0].on()
 
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False
+        self.leds[0].off()
+        self.leds[1].off()
+        self.leds[2].off()
     
     def deinit(self):
         for led in self.leds:
